@@ -824,3 +824,8 @@ js 中函数的作用域是独立的，我们可以把一个单一的函数当�
 * https://zhuanlan.zhihu.com/p/26118022
 * https://yuguo.us/weblog/javascript-module-development-history/
 * https://huangxuan.me/2015/07/09/js-module-7day/
+
+作者：应开翔
+链接：
+来源：个人博客
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
