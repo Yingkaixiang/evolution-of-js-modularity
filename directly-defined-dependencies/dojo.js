@@ -1,13 +1,6 @@
 var dojo = {
   _scopeMap: {},
   _loadedModules: {},
-  _modulePrefixes: {
-    dojo: 	{	name: "dojo", value: "." },
-    // dojox: 	{	name: "dojox", value: "../dojox" },
-    // dijit: 	{	name: "dijit", value: "../dijit" },
-    doh: 	{	name: "doh", value: "../util/doh" },
-    tests: 	{	name: "tests", value: "tests" }
-  },
 };
 
 dojo.global = this;
@@ -24,36 +17,19 @@ dojo._getProp = function(parts, create, context){
 }
 
 dojo.getObject = function(name, create, context){
-  return dojo._getProp(name.split("."), create, context); // Object
+  return dojo._getProp(name.split("."), create, context);
 }
 
 dojo.provide = function(resourceName){
   resourceName = resourceName + "";
-  return (dojo._loadedModules[resourceName] = dojo.getObject(resourceName, true)); // Object
+  const _module = dojo.getObject(resourceName, true);
+  dojo._loadedModules[resourceName] = _module;
+  return _module;
 }
 
-dojo.require = function(moduleName, omitModuleCheck){
+dojo.require = function(moduleName){
   var module = dojo._loadedModules[moduleName];
   if(module){
     return module;
   }
-
-  // var relpath = dojo._getModuleSymbols(moduleName).join("/") + '.js';
-  // var modArg = !omitModuleCheck ? moduleName : null;
-  // var ok = dojo._loadPath(relpath, modArg);
-  // if(!ok && !omitModuleCheck){
-  //   throw new Error("Could not load '" + moduleName + "'; last tried '" + relpath + "'");
-  // }
-
-  // // check that the symbol was defined
-  // // Don't bother if we're doing xdomain (asynchronous) loading.
-  // if(!omitModuleCheck && !d._isXDomain){
-  //   // pass in false so we can give better error
-  //   module = d._loadedModules[moduleName];
-  //   if(!module){
-  //     throw new Error("symbol '" + moduleName + "' is not defined after loading '" + relpath + "'");
-  //   }
-  // }
-
-  // return module;
 }
