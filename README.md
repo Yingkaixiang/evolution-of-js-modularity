@@ -100,10 +100,9 @@ app.hello = function(x) {
 
 ## 命名空间模式 (2002)
 
-为了解决命名冲突的问题，你可以使用特殊的代码约定。例如，你可以为所有变量和函数添加特定的前缀：
-`myApp_`: myApp_address, myApp_validateUser()。你还可以使用 JavaScript 中函数是一等公民的概念，即你可以将它们分配给变量，对象的属性以及作为其他函数的返回值。因此，你可以创建类似于 `document` 和 `window` 对象的方法属性（document.write()，window.alert()）。
+为了解决命名冲突的问题，你可以使用特殊的代码约定。例如，你可以为所有变量和函数添加特定的前缀：`myApp_`: myApp_address, myApp_validateUser()。你还可以使用 JavaScript 中函数是一等公民的概念（一等公民：即你可以将它们分配给变量，对象的属性以及作为其他函数的返回值）。因此，你可以创建类似于 `document` 和 `window` 对象的方法属性（document.write()，window.alert()）。
 
-ui 库 Bindows 是第一个利用这个方法的项目。Bindows 由我们已经很熟悉的 Erik Arvidsson 于2002年创建。他没有在函数和变量的名称中使用前缀，而是使用了一个全局对象，该对象的属性包含库的数据和逻辑。事实上它大大减少了全局代码的污染。该代码组织的模式现在被称为“命名空间”（命名空间模式）。
+ui 库 Bindows 是第一个使用这种模式的项目。Bindows 由我们已经很熟悉的 Erik Arvidsson 于2002年创建。他没有在函数和变量的名称中使用前缀，而是使用了一个全局对象，该对象的属性包含库的数据和逻辑。事实上它大大减少了全局代码的污染。该代码组织的模式现在被称为“命名空间”（命名空间模式）。
 
 如果将这个想法应用到示例中，我们将得到如下结果：
 
@@ -113,67 +112,69 @@ var app = {};
 
 // greeting.js 文件
 app.helloInLang = {
-    en: 'Hello world!',
-    es: '¡Hola mundo!',
-    ru: 'Привет мир!'
+  en: 'Hello world!',
+  es: '¡Hola mundo!',
+  ru: 'Привет мир!'
 };
 
 // hello.js 文件
 app.writeHello = function (lang) {
-    document.write(app.helloInLang[lang]);
+  document.write(app.helloInLang[lang]);
 };
 ```
 
-如我们所见，逻辑和数据现在位于对象 `app` 的属性中。因此，我们不会污染全局，而是继续从不同文件访问应用程序的各个部分。
+你可以看到，逻辑和数据现在位于对象 `app` 的属性中。因此，它们不会污染全局，而是继续从不同文件访问应用程序的各个部分。
 
-命名空间模式可能是当今 JavaScript 中最著名的模式。Bindows 是第一个，但之后有很多其他框架和库以这种方式组织逻辑，例如 Dojo（2005），YUI（2005）。同时我们需要知道 Erik 并不认为自己是这种模式的作者，但他不记得自己是受到什么特定项目的启发了。
+命名空间模式可能是当今 JavaScript 中最著名的模式。Bindows 是第一个，但之后有很多其他框架和库以这种方式组织逻辑，例如 Dojo（2005），YUI（2005）。同时我们需要知道 Erik 并不认为自己是这种模式的创建者，但他不记得自己是受到什么特定项目的启发了。
 
 ## 模块模式 (2003)
 
-命名空间为代码组织提供了某种顺序。但是这显然还不够，因为还没有解决方案来隔离代码和数据。
+命名空间为代码组织提供了某种方式。但是这显然还不够，因为还没有解决方案来隔离代码和数据。
 
 解决此问题的先驱是模块模式。它的主要思想是用闭包封装数据和代码，并通过外部可访问的方法提供对它们的访问。这是这种模式的基本示例：
 
 ```js
 var greeting = (function () {
-    var module = {};
+  var module = {};
 
-    var helloInLang = {
-        en: 'Hello world!',
-        es: '¡Hola mundo!',
-        ru: 'Привет мир!'
-    };
+  var helloInLang = {
+    en: 'Hello world!',
+    es: '¡Hola mundo!',
+    ru: 'Привет мир!'
+  };
 
-    module.getHello = function (lang) {
-        return helloInLang[lang];
-    };
+  module.getHello = function (lang) {
+    return helloInLang[lang];
+  };
 
-    module.writeHello = function (lang) {
-        document.write(module.getHello(lang))
-    };
+  module.writeHello = function (lang) {
+    document.write(module.getHello(lang))
+  };
     
-    return module;
+  return module;
 }());
 ```
 
-在这里，我们看到了执行函数(IIEF)，该函数返回一个模块对象，该模块对象又具有方法 `getHello`，该方法通过闭包访问对象 `helloInLang`。 因此`helloInLang` 变得无法从外部访问，并且我们获得了一段原子代码，可以将该代码粘贴到任何其他脚本中，而不会发生名称冲突。
+在这里，我们看到了立即执行函数（IIEF），该函数返回一个模块对象，该模块对象又具有方法 `getHello`，该方法通过闭包访问对象 `helloInLang`。 因此 `helloInLang` 变得无法从外部访问，并且我们获得了一段原子代码，可以将该代码粘贴到任何其他脚本中，而不会发生名称冲突。
 
-这种方法首次被使用是在2003年，当时 Richard Cornford 在 comp.lang.javascript 组中提供了这种模式的示例，以说明闭包的用法。在2005-2006年，Yahoo！开发了YUI框架。在 Douglas Crockford 的领导下，他们的项目采用了这种方法。但是，最大的推动力是 Douglas 在2008年提出的，当时他在他的书《 JavaScript the Good Parts》中描述了“模块”。
+这种方法首次被使用是在2003年，当时 Richard Cornford 在 comp.lang.javascript 组中提供了这种模式的[示例](https://groups.google.com/forum/#!msg/comp.lang.javascript/eTzWVa1W_pE/N9lnvRG9WJ8J)，以说明闭包的用法。在2005-2006年，Yahoo！开发了YUI框架。在 Douglas Crockford 的领导下，他们的项目采用了这种方法。但是，最大的推动力是 Douglas 在2008年提出的，当时他在他的书《JavaScript the Good Parts》中描述了“模块”。
 
-同样，这里有一篇不错的文章 JavaScript Module Pattern：In-Depth。它描述了该模块的多种实现方式。建议大家阅读一下。
+同样，这里有一篇不错的文章 [JavaScript Module Pattern：In-Depth](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html)。它描述了该模块的多种实现方式。建议大家阅读一下。
 
-## Template Defined Dependencies (2006)
+## 模板依赖定义 (2006)
 
-Template Defined Dependencies 是分离依赖项定义家族中的下一个模式。我能够在Prototype 1.4（2006）库中找到这种方法的最早使用。但是我怀疑该方法也用于早期版本的库中。如果您可以访问早期版本的原型，请告诉我）。
+“模板依赖定义” 是分离依赖定义家族中的下一个模式。这种模式最早在 [Prototype 1.4](https://github.com/myshov/history-of-javascript/blob/master/old_libs/prototype-1.4.0/src/prototype.js)（2006）被使用。但我怀疑该模式也被用于早期版本的库中。如果您可以访问早期版本的 Prototype，请告诉我）。
 
-Prototype 的开发由 Sam Stephenson 于2005年开始。Prototype 是当时 Ruby on Rails 不可或缺的一部分。因为 Sam 在ruby上很有经验，所以在管理依赖项时选择了简单的 erb 模板就不足为奇了。
+Prototype 的开发由 [Sam Stephenson](https://github.com/sstephenson) 于2005年开始。Prototype 是当时 Ruby on Rails 不可或缺的一部分。因为 Sam 在 ruby 上很有经验，所以在管理依赖项时选择了简单的 erb 模板就不足为奇了。
 
-如果我们尝试概括一下，可以说，该模式通过将特殊标签包含在目标文件中来定义依赖项。可以通过模板化（erb，jinja，smarty）和特殊的构建工具（例如borshik）来将标签解析为实际代码。与先前讨论的分离依赖项定义模式相反，该模式仅适用于预构建步骤。
+> 译者注：erb 模板就是我们熟悉的模板引擎，例如：基于 NodeJS 的 pug 以及 ejs 等。
 
-让我们使用这种依赖关系定义样式来转换示例。为此，我们将使用borshik。
+如果我们尝试概括一下，可以说，该模式通过将特殊标签包含在目标文件中来定义依赖项。可以通过模板化（erb，jinja，smarty）和特殊的构建工具（例如borshik）来将标签解析为实际代码。与先前讨论的分离依赖定义模式相反，该模式仅适用于预构建步骤。
+
+让我们使用这种依赖关系定义样式来转换示例。为此，我们将使用 borshik。
 
 ```js
-// file app.tmp.js
+// app.tmp.js 文件
 
 /*borschik:include:../lib/main.js*/
 
@@ -181,10 +182,10 @@ Prototype 的开发由 Sam Stephenson 于2005年开始。Prototype 是当时 Rub
 
 /*borschik:include:../lib/writeHello.js*/
 
-// file main.js
+// main.js 文件
 var app = {};
 
-// file helloInLang.js
+// helloInLang.js 文件
 app.helloInLang = {
     en: 'Hello world!',
     es: '¡Hola mundo!',
@@ -197,46 +198,48 @@ app.writeHello = function (lang) {
 };
 ```
 
-在示例文件app.tmp.js中定义了插入的脚本及其顺序。如果你考虑一下这个示例，那么很明显，这种方法不会从根本上改变开发人员的开发方式。你只不过通过使用其他标签来代替 `<script>` 标签。因此，我们仍然会忘记某些脚本或弄乱插入被脚本的顺序。所以，此方法的主要目的是从多个文件中创建一个单一脚本。
+在示例文件app.tmp.js中定义了插入的脚本及其顺序。如果你考虑一下这个示例，那么很明显，这种方法不会从根本上改变开发人员的开发方式。你只不过通过使用其他标签来代替 `<script>` 标签。因此，我们仍然会忘记某些脚本或弄乱被插入脚本的顺序。所以，此方法的主要目的将从多个文件创建成一个单一文件。
 
-## Comment Defined Dependencies (2006)
+## 注释依赖定义 (2006)
 
-Comment Defined Dependencies 也是分离依赖关系定义族的子类型。它与直接定义的依赖项非常相似，但是在这种情况下，我们不使用某种方法，而是使用注释，其中包括有关特定模块所有依赖项的信息。
+“注释依赖定义” 也是分离依赖关系定义的子类型。它与 “直接定义依赖” 非常相似，但是在这种模式下，我们不使用某种编程方法，而是使用注释，其中包括有关特定模块所有依赖项的信息。
 
-使用此模式的应用程序必须是预先构建的（该方法在2006年用于 Valerio Proietti 创建的MooTools），或者必须动态解析下载的代码并在运行时解析依赖项。最后一种方法是由 NicolásBevacqua 创建的 LazyJS 中使用的。
+使用此模式的应用程序必须是预先构建的（该方法在2006年用于 [Valerio Proietti](https://github.com/kamicane) 创建的 [MooTools](https://github.com/mootools/mootools-core/blob/41b0bdedce3adeb921c181145d7c79a8ecbf4763/Plugins/Fxpack.js#L12)），或者必须动态解析下载的代码并在运行时解析依赖项。最后一种方法是由 NicolásBevacqua 创建的 [LazyJS](https://github.com/bevacqua/lazyjs) 中使用的。
 
 如果使用此库重写我们的示例将如下所示：
 
 ```js
-// file helloInLang.js
+// helloInLang.js 文件
 var helloInLang = {
     en: 'Hello world!',
     es: '¡Hola mundo!',
     ru: 'Привет мир!'
 };
 
-// file sayHello.js
+// sayHello.js 文件
 
 /*! lazy require scripts/app/helloInLang.js */
 
 function sayHello(lang) {
-    return helloInLang[lang];
+  return helloInLang[lang];
 }
 
-// file hello.js
+// hello.js 文件
 
 /*! lazy require scripts/app/sayHello.js */
 
 document.write(sayHello('en'));
 ```
 
-简而言之，库是如何工作的。 库下载文件时，它会分析其内容，找到具有相关性的相应注释，并最终下载它们（相关性），重复对下载文件进行分析的过程。
+我们来看看这个库时如何工作的。库下载文件时，它会分析其内容，找到相关的加载模块注释，并下载它们，然后重复之前的操作。
+
+> 译者注：如同递归一般的加载解析文件，直到全部文件被解析完毕。
 
 使用此方法最著名的库是 MooTools。 LazyJS 是一个有趣的实验，但是由于它的出现是在 CommonJS 和 AMD 之后发生的，因此 LazyJS 并没有引起开发人员的广泛关注。
 
-## 外部依赖定义(2007)
+## 外部依赖定义 (2007)
 
-让我们看一下DDD系列中的最后一个模式。在外部定义的依赖关系模式中，所有依赖关系都在主要上下文之外定义，例如在配置文件中或在代码中作为对象或具有依赖关系列表的数组。但是，有一个准备阶段。在此阶段中，应用程序将以正确的顺序加载所有依赖项进行初始化。
+让我们看一下 “分离依赖定义” 系列中的最后一个模式。在外部定义的依赖关系模式中，所有依赖关系都在主要上下文之外定义，例如在配置文件中或在代码中作为对象或具有依赖关系列表的数组。但是，有一个准备阶段。在此阶段中，应用程序将以正确的顺序加载所有依赖项进行初始化。
 
 我设法找到的最早使用这种方法的日期是2007年在MooTools 1.1中。
 
