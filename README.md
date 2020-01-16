@@ -62,7 +62,7 @@ JavaScript 在构建大型应用程序时的另一个不便之处是，需要在
 
 > 译者注：
 > 
-> Dojo 会把每一个单独的 js 文件当做一个 resource，每当浏览器加载了一个 js 文件后，`dojo.provide()` 方法就会将其注册为一个模块。原理是每个 js 文件在顶部都必须有一个 `dojo.provide()` 方法的调用，例如： `js/dojo/foo.js` 需要写成 `dojo.provide(dojo.foo)`。
+> Dojo 会把每一个单独的 js 文件当做一个 resource，每当浏览器加载了一个 js 文件后，`dojo.provide()` 方法就会将其注册为一个模块。原理是每个 js 文件在顶部都必须有一个 `dojo.provide()` 方法的调用，并且传入的字符串参数是一个表示当前模块在 `window` 对象下的属性路径，举个例子：`dojo.provide('dojo.foo')` 表示程序会获取 `window.dojo.foo` 这个属性的值作为它的模块代码，而这个模块的名字为 `dojo.foo`。
 >
 > 我们会发现 Dojo 最初的设计思想和 CommonJS 还是有几分相似的 :)。
 >
