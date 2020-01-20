@@ -96,7 +96,7 @@ app.hello = function(x) {
 
 在这里，我们看到模块是使用函数 `dojo.provide` 来定义的，并且当你使用 `dojo.require` 时，便开始获取模块代码。这是 Dojo 1.7 版之前使用的一种相当简单的方法。到目前为止，[Google Closure Library](https://github.com/google/closure-library) 一直在使用它。
 
-> 译者注：Google Closure Library 的基本功能和 Dojo 雷同，就不在这里说明了，大家有兴趣可以自行学习。
+> 译者注：Google Closure Library 的基本功能和 Dojo 雷同，就不在这里说明了，大家有兴趣可以自行学习。但顺带一提 Goole Closure 是目前 tree shaking 效果最好的库。
 
 ## 命名空间模式 (2002)
 
